@@ -45,6 +45,7 @@ const Popup = () => {
         count up
       </button>
       <button onClick={changeBackground}>change background</button>
+      <button onClick={changeBackground}>イシューのコピー</button>
     </>
   );
 };

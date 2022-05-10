@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import { Storage } from "./types/storage";
 
 const Options = () => {
-  const [color, setColor] = useState<string>("");
+  const [githuhPersonalAccessToken, setGithuhPersonalAccessToken] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-  const [like, setLike] = useState<boolean>(false);
 
   useEffect(() => {
     // Restores select box and checkbox state using the preferences
     // stored in chrome.storage.
     chrome.storage.sync.get(
       {
-        favoriteColor: "red",
-        likesColor: true,
-      },
+        githubPersonalAccessToken: ""
+      } as Storage,
       (items) => {
-        setColor(items.favoriteColor);
-        setLike(items.likesColor);
+        setGithuhPersonalAccessToken((items as Storage).githubPersonalAccessToken);
       }
     );
   }, []);
@@ -25,8 +23,7 @@ const Options = () => {
     // Saves options to chrome.storage.sync.
     chrome.storage.sync.set(
       {
-        favoriteColor: color,
-        likesColor: like,
+        githuhPersonalAccessToken
       },
       () => {
         // Update status to let user know options were saved.
@@ -42,25 +39,8 @@ const Options = () => {
   return (
     <>
       <div>
-        Favorite color: <select
-          value={color}
-          onChange={(event) => setColor(event.target.value)}
-        >
-          <option value="red">red</option>
-          <option value="green">green</option>
-          <option value="blue">blue</option>
-          <option value="yellow">yellow</option>
-        </select>
-      </div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={like}
-            onChange={(event) => setLike(event.target.checked)}
-          />
-          I like colors.
-        </label>
+        Github Personal Access Token:
+        <input type="text" onChange={(v) => setGithuhPersonalAccessToken(v.target.value)}>{githuhPersonalAccessToken}</input>
       </div>
       <div>{status}</div>
       <button onClick={saveOptions}>Save</button>
