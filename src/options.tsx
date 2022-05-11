@@ -15,7 +15,7 @@ const RepoToCopyField = ({
 }) => {
   return (
     <div>
-      <p style={{fontSize: 14}}>Repo {index + 1}</p>
+      <p style={{ fontSize: 14 }}>Repo {index + 1}</p>
       <div>
         <label>Owner: </label>
         <input
@@ -55,19 +55,17 @@ const Options = () => {
   useEffect(() => {
     // Restores select box and checkbox state using the preferences
     // stored in chrome.storage.
-    chrome.storage.sync.get(
-      (items) => {
-        setGithubPersonalAccessToken(
-          (items as ChromeStorage).githubPersonalAccessToken ?? ""
-        );
-        setReposToCopy(
-          (items as ChromeStorage).reposToCopy ?? [
-            { owner: "", repository: "" },
-            { owner: "", repository: "" },
-          ]
-        );
-      }
-    );
+    chrome.storage.sync.get((items) => {
+      setGithubPersonalAccessToken(
+        (items as ChromeStorage).githubPersonalAccessToken ?? ""
+      );
+      setReposToCopy(
+        (items as ChromeStorage).reposToCopy ?? [
+          { owner: "", repository: "" },
+          { owner: "", repository: "" },
+        ]
+      );
+    });
   }, []);
 
   const saveOptions = () => {
