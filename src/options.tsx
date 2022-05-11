@@ -1,20 +1,67 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { Storage } from "./types/storage";
+import { useReposToCopy } from "./hooks/useRepoToCopy";
+import { RepoToCopy } from "./types/repoToCopy";
+import { ChromeStorage } from "./types/storage";
+
+const RepoToCopyField = ({
+  index,
+  repoToCopy,
+  setRepoToCopy,
+}: {
+  index: number;
+  repoToCopy: RepoToCopy;
+  setRepoToCopy: (index: number, repoToCopy: RepoToCopy) => void;
+}) => {
+  return (
+    <div>
+      <label>Owner</label>
+      <input
+        type="text"
+        value={repoToCopy.owner}
+        onChange={(e) => {
+          setRepoToCopy(index, {
+            owner: e.target.value,
+            repository: repoToCopy.repository,
+          });
+        }}
+      />
+      <label>Repository</label>
+      <input
+        type="text"
+        value={repoToCopy.repository}
+        onChange={(e) => {
+          setRepoToCopy(index, {
+            owner: repoToCopy.owner,
+            repository: e.target.value,
+          });
+        }}
+      />
+    </div>
+  );
+};
 
 const Options = () => {
-  const [githuhPersonalAccessToken, setGithuhPersonalAccessToken] = useState<string>("");
+  const [githubPersonalAccessToken, setGithubPersonalAccessToken] =
+    useState<string>("");
   const [status, setStatus] = useState<string>("");
+  const { reposToCopy, setRepoToCopy, setReposToCopy } = useReposToCopy();
 
   useEffect(() => {
     // Restores select box and checkbox state using the preferences
     // stored in chrome.storage.
     chrome.storage.sync.get(
-      {
-        githubPersonalAccessToken: ""
-      } as Storage,
+      ["githubPersonalAccessToken", "ReposToCopy"],
       (items) => {
-        setGithuhPersonalAccessToken((items as Storage).githubPersonalAccessToken);
+        setGithubPersonalAccessToken(
+          (items as ChromeStorage).githubPersonalAccessToken ?? ""
+        );
+        setReposToCopy(
+          (items as ChromeStorage).reposToCopy ?? [
+            { owner: "", repository: "" },
+            { owner: "", repository: "" },
+          ]
+        );
       }
     );
   }, []);
@@ -23,7 +70,8 @@ const Options = () => {
     // Saves options to chrome.storage.sync.
     chrome.storage.sync.set(
       {
-        githuhPersonalAccessToken
+        githubPersonalAccessToken,
+        reposToCopy,
       },
       () => {
         // Update status to let user know options were saved.
@@ -40,7 +88,24 @@ const Options = () => {
     <>
       <div>
         Github Personal Access Token:
-        <input type="text" onChange={(v) => setGithuhPersonalAccessToken(v.target.value)}>{githuhPersonalAccessToken}</input>
+        <input
+          type="text"
+          onChange={(v) => setGithubPersonalAccessToken(v.target.value)}
+          value={githubPersonalAccessToken}
+        />
+      </div>
+      <div>
+        Repos To Copy
+        <RepoToCopyField
+          index={0}
+          repoToCopy={reposToCopy[0]}
+          setRepoToCopy={setRepoToCopy}
+        />
+        <RepoToCopyField
+          index={1}
+          repoToCopy={reposToCopy[1]}
+          setRepoToCopy={setRepoToCopy}
+        />
       </div>
       <div>{status}</div>
       <button onClick={saveOptions}>Save</button>
