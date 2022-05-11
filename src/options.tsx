@@ -15,28 +15,33 @@ const RepoToCopyField = ({
 }) => {
   return (
     <div>
-      <label>Owner</label>
-      <input
-        type="text"
-        value={repoToCopy.owner}
-        onChange={(e) => {
-          setRepoToCopy(index, {
-            owner: e.target.value,
-            repository: repoToCopy.repository,
-          });
-        }}
-      />
-      <label>Repository</label>
-      <input
-        type="text"
-        value={repoToCopy.repository}
-        onChange={(e) => {
-          setRepoToCopy(index, {
-            owner: repoToCopy.owner,
-            repository: e.target.value,
-          });
-        }}
-      />
+      <p style={{fontSize: 14}}>Repo {index + 1}</p>
+      <div>
+        <label>Owner: </label>
+        <input
+          type="text"
+          value={repoToCopy.owner}
+          onChange={(e) => {
+            setRepoToCopy(index, {
+              owner: e.target.value,
+              repository: repoToCopy.repository,
+            });
+          }}
+        />
+      </div>
+      <div>
+        <label>Repository: </label>
+        <input
+          type="text"
+          value={repoToCopy.repository}
+          onChange={(e) => {
+            setRepoToCopy(index, {
+              owner: repoToCopy.owner,
+              repository: e.target.value,
+            });
+          }}
+        />
+      </div>
     </div>
   );
 };
@@ -51,7 +56,6 @@ const Options = () => {
     // Restores select box and checkbox state using the preferences
     // stored in chrome.storage.
     chrome.storage.sync.get(
-      ["githubPersonalAccessToken", "ReposToCopy"],
       (items) => {
         setGithubPersonalAccessToken(
           (items as ChromeStorage).githubPersonalAccessToken ?? ""
@@ -95,7 +99,6 @@ const Options = () => {
         />
       </div>
       <div>
-        Repos To Copy
         <RepoToCopyField
           index={0}
           repoToCopy={reposToCopy[0]}
